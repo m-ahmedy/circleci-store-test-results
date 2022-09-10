@@ -1,0 +1,27 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/node:16.17.0
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Install JUnit coverage reporter
+          command: yarn add --dev jest-junit
+      - run:
+          name: Run tests
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/
+          command: |
+            npm test -- --watchAll=false --coverage --reporters=jest-junit
+      - store_test_results:
+          path: ./reports
+
+workflows:
+  default:
+    jobs:
+      - test
